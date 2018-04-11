@@ -22,6 +22,8 @@ import java.util.Scanner;
 
 public class Main {
 	public static final String ANNOTATED_FILE = "10_annotated.txt";
+	public static final String IRMAK = "10_annotated_irmak.txt";
+	public static final String SALIH = "10_annotated_salih.txt";
 	public static final int EXIT_CODE = 444;
 	public static final int NOT_ANNOTATED = 333;
 	public static ArrayList<Integer> arr = new ArrayList<Integer>(Arrays.asList(1,2,3));
@@ -94,9 +96,66 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
+	private static void replaceFile(ArrayList<Tweet> tweetsIrmak,ArrayList<Tweet> tweetsSalih) {
+		PrintWriter writerIrmak;
+		PrintWriter writerSalih;
 
+		try {
+			writerIrmak = new PrintWriter(IRMAK);
+			writerSalih = new PrintWriter(SALIH);
+
+			for (int i = 0; i < tweetsIrmak.size(); i++) {
+				writerIrmak.println(tweetsIrmak.get(i).tweetToString());
+				writerSalih.println(tweetsSalih.get(i).tweetToString());
+			}
+			writerIrmak.close();
+			writerSalih.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private static void checkDiff() {
+		System.out.println("Collecting file : "+IRMAK + " and "+ SALIH);
+		ArrayList<Tweet> tweetsIrmak = new ArrayList<>();
+		ArrayList<Tweet> tweetsSalih = new ArrayList<>();
+		try {
+			Scanner inIrmak = new Scanner(new File(IRMAK));
+			Scanner inSalih = new Scanner(new File(SALIH));
+			while (inIrmak.hasNextLine()) {
+				tweetsIrmak.add(new Tweet(inIrmak.nextLine()));
+				tweetsSalih.add(new Tweet(inSalih.nextLine()));
+			}
+			System.out.println("Annotated file is found.");
+			inIrmak.close();
+			inSalih.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("File is not found!");
+		}
+		System.out.println("If you don't want to change annotation, hit enter, else type new annotation , 444 to quit");
+		Scanner scan = new Scanner(System.in);
+		int temp;
+		for (int i = 0;i<tweetsIrmak.size();i++){
+			if(tweetsIrmak.get(i).getAnnotation()!=tweetsSalih.get(i).getAnnotation()) {
+				System.out.println(tweetsIrmak.get(i).getText());
+				System.out.println("Irmak says: "+ tweetsIrmak.get(i).getAnnotation() + "\tSalih says: " + tweetsSalih.get(i).getAnnotation());
+				System.out.println("Irmak's new annotation : ");
+				temp = scan.nextInt();
+				if (temp == 444) {
+					break;
+				} else {
+					tweetsIrmak.get(i).setAnnotation(temp);
+				}
+				System.out.println("Salih's new annotation : ");
+				temp = scan.nextInt();
+				if (temp == 444) {
+					break;
+				} else {
+					tweetsSalih.get(i).setAnnotation(temp);
+				}
+			}
+		}
+		replaceFile(tweetsIrmak,tweetsSalih);
 	}
 
 	public static void annotate(){
