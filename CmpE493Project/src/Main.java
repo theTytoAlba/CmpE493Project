@@ -23,7 +23,9 @@ import java.util.Scanner;
 public class Main {
 	public static final String ANNOTATED_FILE = "10_annotated.txt";
 	public static final String IRMAK = "10_annotated_irmak.txt";
+	public static final String IRMAK_REVISED = "10_annotated_irmak_revised.txt";
 	public static final String SALIH = "10_annotated_salih.txt";
+	public static final String SALIH_REVISED = "10_annotated_salih_revised.txt";
 	public static final int EXIT_CODE = 444;
 	public static final int NOT_ANNOTATED = 333;
 	public static ArrayList<Integer> arr = new ArrayList<Integer>(Arrays.asList(1,2,3));
@@ -96,13 +98,13 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	private static void replaceFile(ArrayList<Tweet> tweetsIrmak,ArrayList<Tweet> tweetsSalih) {
+	private static void replaceFileDiff(ArrayList<Tweet> tweetsIrmak,ArrayList<Tweet> tweetsSalih) {
 		PrintWriter writerIrmak;
 		PrintWriter writerSalih;
 
 		try {
-			writerIrmak = new PrintWriter(IRMAK);
-			writerSalih = new PrintWriter(SALIH);
+			writerIrmak = new PrintWriter(IRMAK_REVISED);
+			writerSalih = new PrintWriter(SALIH_REVISED);
 
 			for (int i = 0; i < tweetsIrmak.size(); i++) {
 				writerIrmak.println(tweetsIrmak.get(i).tweetToString());
@@ -155,7 +157,7 @@ public class Main {
 				}
 			}
 		}
-		replaceFile(tweetsIrmak,tweetsSalih);
+		replaceFileDiff(tweetsIrmak,tweetsSalih);
 	}
 
 	public static void annotate(){
