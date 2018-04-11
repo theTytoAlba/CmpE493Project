@@ -22,7 +22,7 @@ import java.util.Scanner;
 
 public class Main {
 	public static final String ANNOTATED_FILE = "10_annotated.txt";
-	public static final String IRMAK = "10_annotated_irmak.txt";
+	public static final String IRMAK = "10_irmak_annotated.txt";
 	public static final String IRMAK_REVISED = "10_annotated_irmak_revised.txt";
 	public static final String SALIH = "10_annotated_salih.txt";
 	public static final String SALIH_REVISED = "10_annotated_salih_revised.txt";
@@ -139,6 +139,7 @@ public class Main {
 		int temp;
 		for (int i = 0;i<tweetsIrmak.size();i++){
 			if(tweetsIrmak.get(i).getAnnotation()!=tweetsSalih.get(i).getAnnotation()) {
+				System.out.println("Tweet number: "+ (i+1) + "/600");
 				System.out.println(tweetsIrmak.get(i).getText());
 				System.out.println("Irmak says: "+ tweetsIrmak.get(i).getAnnotation() + "\tSalih says: " + tweetsSalih.get(i).getAnnotation());
 				System.out.println("Irmak's new annotation : ");
