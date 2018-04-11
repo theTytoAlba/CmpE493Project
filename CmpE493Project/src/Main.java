@@ -1,7 +1,4 @@
-import sun.misc.IOUtils;
-
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -26,11 +23,12 @@ public class Main {
 	public static final String IRMAK_REVISED = "10_annotated_irmak_revised.txt";
 	public static final String SALIH = "10_annotated_salih.txt";
 	public static final String SALIH_REVISED = "10_annotated_salih_revised.txt";
+	public static final String FINAL_FILE = "10_annotated_final.txt";
 	public static final int EXIT_CODE = 444;
 	public static final int NOT_ANNOTATED = 333;
-	public static ArrayList<Integer> arr = new ArrayList<Integer>(Arrays.asList(1,2,3));
+	public static ArrayList<Integer> arr = new ArrayList<Integer>(Arrays.asList(1,2,3, 4));
 	public static void main(String[] args) {
-		System.out.println("Press 1 for annotation\nPress 2 to review an annotated file\nPress 3 to check diff between two files");
+		System.out.println("Press 1 for annotation\nPress 2 to review an annotated file\nPress 3 to check diff between two files\nPress 4 to calculate kappa score.");
 		Scanner scan = new Scanner(System.in);
 		int temp = scan.nextInt();
 		if(arr.contains(temp)){
@@ -42,10 +40,79 @@ public class Main {
 			}
 			else if(temp==3){
 				checkDiff();
+			} else if (temp == 4) {
+				kappa();
 			}
 		}else{
 			System.out.println("Aborting!");
 		}
+		scan.close();
+	}
+
+	private static void kappa() {
+		// TODO Auto-generated method stub
+		System.out.println("Collecting file : "+IRMAK + " and "+ SALIH);
+		ArrayList<Tweet> tweetsIrmak = new ArrayList<>();
+		ArrayList<Tweet> tweetsSalih = new ArrayList<>();
+		try {
+			Scanner inIrmak = new Scanner(new File(IRMAK_REVISED));
+			Scanner inSalih = new Scanner(new File(SALIH_REVISED));
+			while (inIrmak.hasNextLine()) {
+				tweetsIrmak.add(new Tweet(inIrmak.nextLine()));
+				tweetsSalih.add(new Tweet(inSalih.nextLine()));
+			}
+			System.out.println("Annotated file is found.");
+			inIrmak.close();
+			inSalih.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("File is not found!");
+		}
+		
+		double pA = 0;
+		for (int i = 0; i < 600; i++) {
+			if (tweetsIrmak.get(i).annotation == tweetsSalih.get(i).annotation) {
+				pA++;
+			}
+		}
+		pA = pA/600;
+		
+		double pE = 0;
+		
+		double ip1=0, ip_1=0, ip2=0, ip0=0;
+		double sp1=0, sp_1=0, sp2=0, sp0=0;
+		for (int i = 0; i < 600; i++) {
+			switch(tweetsIrmak.get(i).annotation) {
+				case 0: 
+					ip0++;
+					break;
+				case 1: 
+					ip1++;
+					break;
+				case 2: 
+					ip2++;
+					break;
+				case -1: 
+					ip_1++;
+					break;
+			}
+			switch(tweetsSalih.get(i).annotation) {
+				case 0: 
+					sp0++;
+					break;
+				case 1: 
+					sp1++;
+					break;
+				case 2: 
+					sp2++;
+					break;
+				case -1: 
+					sp_1++;
+					break;
+			}
+		}
+		pE = ((ip1/600)*(sp1/600) + (ip_1/600)*(sp_1/600) + (ip0/600)*(sp0/600) + (ip2/600)*(sp2/600));
+		System.out.println("pA " + pA + ", pE " + pE);
+		System.out.println("Kappa " + (pA-pE)/(1-pE));
 	}
 
 	private static void review() {
@@ -88,7 +155,7 @@ public class Main {
 	private static void replaceFile(ArrayList<Tweet> tweets) {
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter("10_annotated.txt");
+			writer = new PrintWriter(FINAL_FILE);
 
 			for (int i = 0; i < tweets.size(); i++) {
 				writer.println(tweets.get(i).tweetToString());
@@ -122,8 +189,8 @@ public class Main {
 		ArrayList<Tweet> tweetsIrmak = new ArrayList<>();
 		ArrayList<Tweet> tweetsSalih = new ArrayList<>();
 		try {
-			Scanner inIrmak = new Scanner(new File(IRMAK));
-			Scanner inSalih = new Scanner(new File(SALIH));
+			Scanner inIrmak = new Scanner(new File(IRMAK_REVISED));
+			Scanner inSalih = new Scanner(new File(SALIH_REVISED));
 			while (inIrmak.hasNextLine()) {
 				tweetsIrmak.add(new Tweet(inIrmak.nextLine()));
 				tweetsSalih.add(new Tweet(inSalih.nextLine()));
@@ -149,16 +216,16 @@ public class Main {
 				} else {
 					tweetsIrmak.get(i).setAnnotation(temp);
 				}
-				System.out.println("Salih's new annotation : ");
+				/*System.out.println("Salih's new annotation : ");
 				temp = scan.nextInt();
 				if (temp == 444) {
 					break;
 				} else {
 					tweetsSalih.get(i).setAnnotation(temp);
-				}
+				}*/
 			}
 		}
-		replaceFileDiff(tweetsIrmak,tweetsSalih);
+		replaceFile(tweetsIrmak);
 	}
 
 	public static void annotate(){

@@ -1,0 +1,5 @@
+Irmak Kavasoglu 2013400090
+Salih Sevgican 2013400219
+
+pA: 0.965, pE: 0.3040583333333333
+Kappa score: 0.9497084286278783
